@@ -67,7 +67,7 @@ Connect()│     └────────────────────
 
 ### Удаленная загрузка (`loadstring` через GitHub Raw)
 ```lua
-local ConnectionService = loadstring(game:HttpGet("https://raw.githubusercontent.com/fjdjdhidjfj/ConnectionService/refs/heads/main/ConnectionService.luau"))()
+local ConnectionService = loadstring(game:HttpGet("https://raw.githubusercontent.com/fjdjdhidjfj/ConnectionService/main/ConnectionService.luau"))()
 ```
 
 ### Стандартный импорт через `ModuleScript`
@@ -212,4 +212,4 @@ ConnectionService.Destroy()
 
 ## Лицензия
 
-Распространяется под лицензией MIT.
+Этот проект распространяется под лицензией MIT - подробности в файле [LICENSE](LICENSE).
