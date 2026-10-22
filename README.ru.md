@@ -67,7 +67,7 @@ Connect()│     └────────────────────
 
 ### Удаленная загрузка (`loadstring` через GitHub Raw)
 ```lua
-local ConnectionService = loadstring(game:HttpGet("https://raw.githubusercontent.com/<USERNAME>/<REPO>/main/ConnectionService.luau"))()
+local ConnectionService = loadstring(game:HttpGet("https://raw.githubusercontent.com/fjdjdhidjfj/ConnectionService/refs/heads/main/ConnectionService.luau"))()
 ```
 
 ### Стандартный импорт через `ModuleScript`
