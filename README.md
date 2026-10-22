@@ -67,7 +67,7 @@ The dispatcher maps string identifiers to native `RunService` signals while enfo
 
 ### Remote Bootstrap (`loadstring` via GitHub Raw)
 ```lua
-local ConnectionService = loadstring(game:HttpGet("https://raw.githubusercontent.com/<USERNAME>/<REPO>/main/ConnectionService.luau"))()
+local ConnectionService = loadstring(game:HttpGet("https://raw.githubusercontent.com/fjdjdhidjfj/ConnectionService/refs/heads/main/ConnectionService.luau"))()
 ```
 
 ### Standard `ModuleScript` Require
