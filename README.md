@@ -67,7 +67,7 @@ The dispatcher maps string identifiers to native `RunService` signals while enfo
 
 ### Remote Bootstrap (`loadstring` via GitHub Raw)
 ```lua
-local ConnectionService = loadstring(game:HttpGet("https://raw.githubusercontent.com/fjdjdhidjfj/ConnectionService/refs/heads/main/ConnectionService.luau"))()
+local ConnectionService = loadstring(game:HttpGet("https://raw.githubusercontent.com/fjdjdhidjfj/ConnectionService/main/ConnectionService.luau"))()
 ```
 
 ### Standard `ModuleScript` Require
@@ -91,10 +91,10 @@ ConnectionService.Bind(
 Registers a named callback in the internal registry.
 * **Collision Resolution:** If a task with `name` already exists, its active connection is atomically disconnected before overwriting the descriptor.
 * **Parameters:**
-  * `name` — Unique string identifier for the task.
-  * `callback` — Closure executed every tick. Receives `deltaTime` (seconds elapsed since the previous frame).
-  * `eventType` *(optional)* — Target `RunService` phase. Defaults to `"Heartbeat"`.
-  * `autoStart` *(optional)* — Immediately transitions the task to the `ACTIVE` state. Defaults to `true`.
+  * `name` - Unique string identifier for the task.
+  * `callback` - Closure executed every tick. Receives `deltaTime` (seconds elapsed since the previous frame).
+  * `eventType` *(optional)* - Target `RunService` phase. Defaults to `"Heartbeat"`.
+  * `autoStart` *(optional)* - Immediately transitions the task to the `ACTIVE` state. Defaults to `true`.
 * **Alias:** `ConnectionService.Add`
 
 ---
@@ -212,4 +212,4 @@ ConnectionService.Destroy()
 
 ## License
 
-Distributed under the MIT License.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
