@@ -1,19 +1,24 @@
 local RunService = game:GetService("RunService")
 
 local ConnectionService = {
-    _bindings = {}, -- [name] = { func, eventType, connection, enabled }
+    _bindings = {},
 }
 
 local RUN_EVENTS = {
     Heartbeat = RunService.Heartbeat,
-    RenderStepped = RunService.RenderStepped,
+    RenderStepped = RunService:IsClient() and RunService.RenderStepped or RunService.Heartbeat,
     Stepped = RunService.Stepped,
     PreSimulation = RunService.PreSimulation,
     PostSimulation = RunService.PostSimulation,
 }
 
-
-function ConnectionService.Bind(name: string, func: (deltaTime: number) -> (), eventType: string?, autoStart: boolean?)
+function ConnectionService.Bind(
+    name: string,
+    func: (deltaTime: number) -> (),
+    eventType: string?,
+    autoStart: boolean?,
+    interval: number?
+): boolean
     assert(type(name) == "string", "ConnectionService: name must be a string")
     assert(type(func) == "function", "ConnectionService: func must be a function")
 
@@ -30,6 +35,8 @@ function ConnectionService.Bind(name: string, func: (deltaTime: number) -> (), e
     ConnectionService._bindings[name] = {
         func = func,
         eventType = selectedEvent,
+        interval = if interval and interval > 0 then interval else nil,
+        _elapsed = 0,
         connection = nil,
         enabled = false,
     }
@@ -41,8 +48,7 @@ function ConnectionService.Bind(name: string, func: (deltaTime: number) -> (), e
     return true
 end
 
-
-function ConnectionService.Connect(name: string, forceReconnect: boolean?)
+function ConnectionService.Connect(name: string, forceReconnect: boolean?): boolean
     local entry = ConnectionService._bindings[name]
     if not entry then
         warn(string.format("[ConnectionService] Задача '%s' не найдена", name))
@@ -58,13 +64,28 @@ function ConnectionService.Connect(name: string, forceReconnect: boolean?)
     end
 
     local eventSignal = RUN_EVENTS[entry.eventType]
-    entry.connection = eventSignal:Connect(entry.func)
+    entry._elapsed = 0
+
+    local callback
+    if entry.interval then
+        callback = function(dt: number)
+            entry._elapsed += dt
+            if entry._elapsed >= entry.interval then
+                local stepTime = entry._elapsed
+                entry._elapsed = 0
+                entry.func(stepTime)
+            end
+        end
+    else
+        callback = entry.func
+    end
+
+    entry.connection = eventSignal:Connect(callback)
     entry.enabled = true
     return true
 end
 
-
-function ConnectionService.Disconnect(name: string)
+function ConnectionService.Disconnect(name: string): boolean
     local entry = ConnectionService._bindings[name]
     if not entry or not entry.connection then
         return false
@@ -75,11 +96,11 @@ function ConnectionService.Disconnect(name: string)
     end
     entry.connection = nil
     entry.enabled = false
+    entry._elapsed = 0
     return true
 end
 
-
-function ConnectionService.Toggle(name: string, enabled: boolean?)
+function ConnectionService.Toggle(name: string, enabled: boolean?): boolean
     local entry = ConnectionService._bindings[name]
     if not entry then return false end
 
@@ -91,21 +112,21 @@ function ConnectionService.Toggle(name: string, enabled: boolean?)
     end
 end
 
-
-function ConnectionService.Unbind(name: string)
+function ConnectionService.Unbind(name: string): boolean
     ConnectionService.Disconnect(name)
     ConnectionService._bindings[name] = nil
     return true
 end
 
-
-function ConnectionService.Destroy()
+function ConnectionService.Destroy(): ()
     for name, _ in pairs(ConnectionService._bindings) do
         ConnectionService.Disconnect(name)
     end
     table.clear(ConnectionService._bindings)
 end
 
+ConnectionService.Add = ConnectionService.Bind
+ConnectionService.Remove = ConnectionService.Unbind
 
 if _G.__ConnectionServiceInstance then
     pcall(function()
